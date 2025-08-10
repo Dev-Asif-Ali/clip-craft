@@ -34,11 +34,14 @@ class _HomeScreenState extends State<HomeScreen> {
 
     await ffmpegService.trimVideo(selectedVideo!, outputVideo!, '00:00:05', '00:00:10');
 
+    if (!mounted) return; // ✅ Added check
+
     setState(() => isProcessing = false);
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text("Video trimmed! Saved at $outputVideo")),
     );
   }
+
 
   @override
   Widget build(BuildContext context) {
