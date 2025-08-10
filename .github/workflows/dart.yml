@@ -1,0 +1,55 @@
+name: Flutter CI/CD with Firebase
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout code
+      - uses: actions/checkout@v4
+
+      # Setup Flutter
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.22.0" # Change if your Flutter version differs
+
+      # Install dependencies
+      - name: Install dependencies
+        run: flutter pub get
+
+      # Analyze code
+      - name: Analyze project source
+        run: flutter analyze
+
+      # Run tests (optional — remove if not needed)
+      - name: Run tests
+        run: flutter test
+
+      # Build release APK
+      - name: Build APK
+        run: flutter build apk --release
+
+      # Setup Node.js for Firebase CLI
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      # Install Firebase CLI
+      - name: Install Firebase CLI
+        run: npm install -g firebase-tools
+
+      # Upload APK to Firebase App Distribution
+      - name: Upload to Firebase
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+          FIREBASE_APP_ID: ${{ secrets.FIREBASE_APP_ID }}
+        run: |
+          firebase appdistribution:distribute build/app/outputs/flutter-apk/app-release.apk \
+            --app $FIREBASE_APP_ID \
+            --groups "beta-testers"
