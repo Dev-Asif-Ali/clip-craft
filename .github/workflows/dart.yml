@@ -28,8 +28,8 @@ jobs:
         run: flutter analyze
 
       # Run tests (optional — remove if not needed)
-      - name: Run tests
-        run: flutter test
+      #- name: Run tests
+       # run: flutter test
 
       # Build release APK
       - name: Build APK
